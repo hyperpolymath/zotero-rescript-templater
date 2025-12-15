@@ -29,7 +29,7 @@ Report security vulnerabilities through one of these channels:
 
 #### Email (Alternative)
 
-Send an email to: **[security contact to be added]**
+Use **GitHub Security Advisories** (see above) as the primary contact method.
 
 Include in your report:
 - Description of the vulnerability

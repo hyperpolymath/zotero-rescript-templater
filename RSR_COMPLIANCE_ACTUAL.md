@@ -1,7 +1,7 @@
 # Rhodium Standard Repository (RSR) Compliance Assessment
 
 **Project:** ZoteRho Templater (Zotero + Rhodium)
-**Assessment Date:** 2024-11-22
+**Assessment Date:** 2025-01-15
 **RSR Version:** 1.0.0
 **Assessed By:** Development Team
 

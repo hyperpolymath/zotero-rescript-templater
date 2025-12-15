@@ -151,13 +151,17 @@ jobs:
           # raco pkg install --link $(pwd)
 
       - name: Publish to PowerShell Gallery
-        if: false  # Enable when ready
         shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
         run: |
-          # Publish to PowerShell Gallery
-          # Requires API key in secrets
-          # Publish-Module -Path . -NuGetApiKey ${{ secrets.PSGALLERY_API_KEY }}
-          echo "PowerShell Gallery publication would happen here"
+          if (-not $env:PSGALLERY_API_KEY) {
+            Write-Warning "PSGALLERY_API_KEY not configured - skipping PowerShell Gallery publish"
+            Write-Host "To enable: add PSGALLERY_API_KEY secret to repository settings"
+            exit 0
+          }
+          Publish-Module -Path . -NuGetApiKey $env:PSGALLERY_API_KEY -Verbose
+          Write-Host "✅ Published to PowerShell Gallery"
 
   notify:
     name: Notify Release

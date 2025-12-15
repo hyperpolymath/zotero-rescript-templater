@@ -241,6 +241,43 @@ jobs:
             TestRacketGit/
           retention-days: 7
 
+  test-bash:
+    name: Test Bash Scaffolder
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Bash tests
+        run: |
+          chmod +x tests/bash-tests.sh
+          bash tests/bash-tests.sh
+
+      - name: Test Bash scaffolding manually
+        run: |
+          chmod +x init-zotero-plugin.sh
+          ./init-zotero-plugin.sh -n BashTestProject -a "CI Test" -t student
+
+      - name: Verify Bash generated files
+        run: |
+          test -f BashTestProject/README.md || exit 1
+          test -f BashTestProject/bootstrap.js || exit 1
+          test -f BashTestProject/audit-index.json || exit 1
+          echo "✓ Bash scaffolder generated files correctly"
+
+      - name: Upload Bash test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-bash-projects-${{ matrix.os }}
+          path: BashTestProject/
+          retention-days: 7
+
   lint-powershell:
     name: Lint PowerShell
     runs-on: ubuntu-latest
@@ -404,7 +441,7 @@ jobs:
   status-check:
     name: Status Check
     runs-on: ubuntu-latest
-    needs: [test-powershell, test-racket, lint-powershell, lint-racket, test-documentation, integration-test]
+    needs: [test-powershell, test-racket, test-bash, lint-powershell, lint-racket, test-documentation, integration-test]
     if: always()
 
     steps:
@@ -412,6 +449,7 @@ jobs:
         run: |
           if [ "${{ needs.test-powershell.result }}" != "success" ] || \
              [ "${{ needs.test-racket.result }}" != "success" ] || \
+             [ "${{ needs.test-bash.result }}" != "success" ] || \
              [ "${{ needs.lint-powershell.result }}" != "success" ] || \
              [ "${{ needs.lint-racket.result }}" != "success" ] || \
              [ "${{ needs.integration-test.result }}" != "success" ]; then
