@@ -7,7 +7,7 @@ This document lists the maintainers of the Zotero ReScript Templater project and
 ### Core Maintainers
 
 **Lead Maintainer:**
-- Name: *(To be filled)*
+- Name: Hyperpolymath
 - GitHub: @Hyperpolymath
 - Role: Project leadership, final decision authority, release management
 - Areas: All aspects of the project
@@ -181,9 +181,9 @@ Maintainers can be removed for:
 ### Communication Channels
 
 - **Public**: GitHub Issues, Discussions, PRs
-- **Internal**: *(Private maintainer channel to be set up)*
-- **Security**: security@(domain TBD)
-- **Emergency**: *(Contact information in private channel)*
+- **Internal**: GitHub Discussions (private category for maintainers)
+- **Security**: GitHub Security Advisories (see SECURITY.md)
+- **Emergency**: Direct GitHub mention @Hyperpolymath
 
 ## Acknowledgments
 
@@ -206,11 +206,11 @@ This document can be updated by:
 
 For questions about maintainership:
 - Open a GitHub Discussion
-- Email: *(To be added)*
+- Use GitHub Security Advisories for security-related contact
 - Mention @Hyperpolymath in an issue
 
 ---
 
-*Last updated: 2024-11-22*
+*Last updated: 2025-01-15*
 *Version: 1.0*
 *License: Same as project (AGPL-3.0)*
