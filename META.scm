@@ -15,8 +15,8 @@
      (consequences . ("RSR Gold target" "SHA-pinned actions" "SPDX headers" "Multi-platform CI")))))
 
 (define development-practices
-  '((code-style (languages . ("unknown")) (formatter . "auto-detect") (linter . "auto-detect"))
-    (security (sast . "CodeQL") (credentials . "env vars only"))
+  '((code-style (languages . ("racket" "powershell" "bash" "guile")) (formatter . "auto-detect") (linter . "PSScriptAnalyzer/raco-check"))
+    (security (sast . "CodeQL") (credentials . "env vars only") (actions . "SHA-pinned"))
     (testing (coverage-minimum . 70))
     (versioning (scheme . "SemVer 2.0.0"))))
 

@@ -3,8 +3,7 @@
 # This file specifies how security researchers should disclose vulnerabilities.
 
 Contact: https://github.com/Hyperpolymath/zotero-rescript-templater/security/advisories/new
-Contact: mailto:security@(to-be-configured)
-Expires: 2025-12-31T23:59:59.000Z
+Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://github.com/Hyperpolymath/zotero-rescript-templater/blob/main/.well-known/security.txt
 

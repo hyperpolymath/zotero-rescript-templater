@@ -159,13 +159,12 @@ We thank the following researchers for responsibly disclosing security issues:
 
 ## License Compliance
 
-This project is licensed under AGPL-3.0, which requires:
+This project is dual-licensed under MIT OR AGPL-3.0-or-later:
 
-- Source code availability for network-accessible services
-- Disclosure of modifications
-- License compatibility for derivative works
+- **MIT License**: Standard permissive open source license
+- **AGPL-3.0-or-later**: Copyleft license requiring source disclosure for network services
 
-See [LICENSE](LICENSE) for full details.
+See [LICENSE.txt](LICENSE.txt) for full details.
 
 ## Questions?
 
@@ -176,4 +175,4 @@ If you have questions about security that aren't covered here:
 
 ---
 
-*This security policy is subject to change. Last updated: November 2024*
+*This security policy is subject to change. Last updated: December 2025*
