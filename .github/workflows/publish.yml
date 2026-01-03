@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 name: Publish Packages
 
 # Workflow for publishing to package repositories
