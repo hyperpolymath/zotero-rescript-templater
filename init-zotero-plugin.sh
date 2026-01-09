@@ -459,18 +459,597 @@ dist/
 
 scaffold_practitioner() {
   info "Scaffolding practitioner template..."
-  # Similar implementation for practitioner template
-  # (Abbreviated for space - would include full practitioner template)
-  scaffold_student  # Temporary fallback
-  warning "Note: Practitioner template uses student base (full implementation pending)"
+
+  create_directory "$PROJECT_NAME"
+  create_directory "$PROJECT_NAME/chrome/content"
+  create_directory "$PROJECT_NAME/chrome/locale/en-US"
+  create_directory "$PROJECT_NAME/chrome/skin"
+  create_directory "$PROJECT_NAME/src"
+
+  # README.md - Practitioner focused
+  create_file "$PROJECT_NAME/README.md" "# {{ProjectName}} - Practitioner Edition
+
+A workflow-focused Zotero plugin for professional practitioners.
+
+## Features
+
+- Quick citation insertion
+- Batch operations for large libraries
+- Custom citation styles
+- Integration with common workflows
+
+## Installation
+
+1. Download the latest \`.xpi\` file
+2. In Zotero: Tools → Add-ons → Install Add-on From File
+3. Select the downloaded \`.xpi\` file
+4. Restart Zotero
+
+## Usage
+
+Access plugin features via Tools → {{ProjectName}} menu."
+
+  # install.rdf - Practitioner edition
+  create_file "$PROJECT_NAME/install.rdf" "<?xml version=\"1.0\"?>
+<RDF xmlns=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
+     xmlns:em=\"http://www.mozilla.org/2004/em-rdf#\">
+  <Description about=\"urn:mozilla:install-manifest\">
+    <em:id>{{ProjectName}}@practitioner.zotero.org</em:id>
+    <em:name>{{ProjectName}} Practitioner Edition</em:name>
+    <em:version>{{version}}</em:version>
+    <em:description>Workflow-focused Zotero plugin for practitioners</em:description>
+    <em:creator>{{AuthorName}}</em:creator>
+    <em:type>2</em:type>
+    <em:bootstrap>true</em:bootstrap>
+    <em:targetApplication>
+      <Description>
+        <em:id>zotero@chnm.gmu.edu</em:id>
+        <em:minVersion>5.0</em:minVersion>
+        <em:maxVersion>7.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>"
+
+  # chrome.manifest
+  create_file "$PROJECT_NAME/chrome.manifest" "content {{ProjectName}} chrome/content/
+locale {{ProjectName}} en-US chrome/locale/en-US/
+skin {{ProjectName}} default chrome/skin/
+overlay chrome://zotero/content/zoteroPane.xul chrome://{{ProjectName}}/content/overlay.xul"
+
+  # bootstrap.js - Practitioner edition with workflow features
+  create_file "$PROJECT_NAME/bootstrap.js" "/**
+ * Bootstrap Entry Point - Practitioner Edition
+ * Optimized for professional workflows
+ */
+
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
+
+function startup({ id, version, resourceURI, rootURI = resourceURI.spec }, reason) {
+  Cu.import('resource://gre/modules/Services.jsm');
+  Services.scriptloader.loadSubScript(rootURI + 'chrome/content/main.js');
+
+  if (typeof Zotero === 'undefined') {
+    Zotero = {};
+  }
+
+  Zotero.{{ProjectName}} = {
+    version: version,
+    rootURI: rootURI,
+    initialized: false,
+
+    init: function() {
+      this.registerMenus();
+      this.initialized = true;
+      console.log('{{ProjectName}} Practitioner v' + version + ' initialized');
+    },
+
+    registerMenus: function() {
+      // Register keyboard shortcuts and menus
+    },
+
+    shutdown: function() {
+      this.initialized = false;
+    }
+  };
+
+  Zotero.{{ProjectName}}.init();
+}
+
+function shutdown({ id, version, resourceURI, rootURI = resourceURI.spec }, reason) {
+  if (typeof Zotero !== 'undefined' && Zotero.{{ProjectName}}) {
+    Zotero.{{ProjectName}}.shutdown();
+  }
+}
+
+function install(data, reason) {}
+function uninstall(data, reason) {}"
+
+  # chrome/content/main.js - Practitioner workflow features
+  create_file "$PROJECT_NAME/chrome/content/main.js" "/**
+ * Main Logic - Practitioner Edition
+ * Workflow-focused utilities for professional use
+ */
+
+(function() {
+  'use strict';
+
+  if (!Zotero.{{ProjectName}}) {
+    Zotero.{{ProjectName}} = {};
+  }
+
+  Zotero.{{ProjectName}}.Workflow = {
+    // Quick citation copy to clipboard
+    quickCite: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length === 0) {
+        alert('Please select at least one item');
+        return;
+      }
+      const citations = items.map(item => {
+        const creators = item.getCreators();
+        const firstAuthor = creators.length > 0 ? creators[0].lastName : 'Unknown';
+        const year = item.getField('date').substring(0, 4) || 'n.d.';
+        return '(' + firstAuthor + (creators.length > 1 ? ' et al.' : '') + ', ' + year + ')';
+      });
+      this.copyToClipboard(citations.join('; '));
+      alert('Copied ' + citations.length + ' citation(s) to clipboard');
+    },
+
+    // Batch tag selected items
+    batchTag: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length === 0) {
+        alert('Please select items to tag');
+        return;
+      }
+      const tag = prompt('Enter tag to add to ' + items.length + ' item(s):');
+      if (tag) {
+        items.forEach(item => item.addTag(tag));
+        alert('Added tag \"' + tag + '\" to ' + items.length + ' item(s)');
+      }
+    },
+
+    // Export selected items summary
+    exportSummary: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length === 0) {
+        alert('Please select items to summarize');
+        return;
+      }
+      let summary = '# Bibliography Summary\\n\\n';
+      items.forEach(item => {
+        summary += '- ' + item.getField('title') + ' (' + item.getField('date').substring(0,4) + ')\\n';
+      });
+      this.copyToClipboard(summary);
+      alert('Summary copied to clipboard');
+    },
+
+    copyToClipboard: function(text) {
+      const clipboard = Cc['@mozilla.org/widget/clipboard;1'].getService(Ci.nsIClipboard);
+      const transferable = Cc['@mozilla.org/widget/transferable;1'].createInstance(Ci.nsITransferable);
+      const str = Cc['@mozilla.org/supports-string;1'].createInstance(Ci.nsISupportsString);
+      str.data = text;
+      transferable.addDataFlavor('text/unicode');
+      transferable.setTransferData('text/unicode', str, text.length * 2);
+      clipboard.setData(transferable, null, Ci.nsIClipboard.kGlobalClipboard);
+    }
+  };
+})();"
+
+  # chrome/content/overlay.xul - Practitioner menus
+  create_file "$PROJECT_NAME/chrome/content/overlay.xul" "<?xml version=\"1.0\"?>
+<overlay id=\"{{ProjectName}}-overlay\"
+         xmlns=\"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul\">
+  <script src=\"chrome://{{ProjectName}}/content/main.js\"/>
+  <menupopup id=\"zotero-itemmenu\">
+    <menu id=\"{{ProjectName}}-menu\" label=\"{{ProjectName}}\">
+      <menupopup>
+        <menuitem id=\"{{ProjectName}}-quickcite\"
+                  label=\"Quick Cite\"
+                  oncommand=\"Zotero.{{ProjectName}}.Workflow.quickCite();\"/>
+        <menuitem id=\"{{ProjectName}}-batchtag\"
+                  label=\"Batch Tag Selected\"
+                  oncommand=\"Zotero.{{ProjectName}}.Workflow.batchTag();\"/>
+        <menuseparator/>
+        <menuitem id=\"{{ProjectName}}-summary\"
+                  label=\"Export Summary\"
+                  oncommand=\"Zotero.{{ProjectName}}.Workflow.exportSummary();\"/>
+      </menupopup>
+    </menu>
+  </menupopup>
+</overlay>"
+
+  # package.json
+  create_file "$PROJECT_NAME/package.json" "{
+  \"name\": \"{{ProjectName}}\",
+  \"version\": \"{{version}}\",
+  \"description\": \"Workflow-focused Zotero plugin for practitioners\",
+  \"author\": \"{{AuthorName}}\",
+  \"license\": \"MIT\",
+  \"scripts\": {
+    \"build\": \"tsc\",
+    \"watch\": \"tsc --watch\",
+    \"package\": \"zip -r {{ProjectName}}.xpi . -x 'node_modules/*' -x 'src/*' -x '*.ts'\"
+  },
+  \"devDependencies\": {
+    \"typescript\": \"^5.0.0\"
+  }
+}"
+
+  # .gitignore
+  create_file "$PROJECT_NAME/.gitignore" "node_modules/
+dist/
+*.xpi
+.DS_Store
+*.log"
+
+  success "Practitioner template created"
 }
 
 scaffold_researcher() {
   info "Scaffolding researcher template..."
-  # Similar implementation for researcher template
-  # (Abbreviated for space - would include full researcher template)
-  scaffold_student  # Temporary fallback
-  warning "Note: Researcher template uses student base (full implementation pending)"
+
+  create_directory "$PROJECT_NAME"
+  create_directory "$PROJECT_NAME/chrome/content"
+  create_directory "$PROJECT_NAME/chrome/locale/en-US"
+  create_directory "$PROJECT_NAME/chrome/skin"
+  create_directory "$PROJECT_NAME/src"
+  create_directory "$PROJECT_NAME/data"
+
+  # README.md - Researcher focused
+  create_file "$PROJECT_NAME/README.md" "# {{ProjectName}} - Researcher Edition
+
+An advanced Zotero plugin for academic researchers with citation analysis features.
+
+## Features
+
+- Citation network analysis
+- Duplicate detection and merging
+- Metadata validation and enrichment
+- Export to multiple formats (BibTeX, RIS, JSON-LD)
+- Statistical summaries of your library
+
+## Installation
+
+1. Download the latest \`.xpi\` file
+2. In Zotero: Tools → Add-ons → Install Add-on From File
+3. Select the downloaded \`.xpi\` file
+4. Restart Zotero
+
+## Usage
+
+Access features via:
+- Tools → {{ProjectName}} menu
+- Right-click context menu on selected items"
+
+  # install.rdf - Researcher edition
+  create_file "$PROJECT_NAME/install.rdf" "<?xml version=\"1.0\"?>
+<RDF xmlns=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
+     xmlns:em=\"http://www.mozilla.org/2004/em-rdf#\">
+  <Description about=\"urn:mozilla:install-manifest\">
+    <em:id>{{ProjectName}}@researcher.zotero.org</em:id>
+    <em:name>{{ProjectName}} Researcher Edition</em:name>
+    <em:version>{{version}}</em:version>
+    <em:description>Advanced citation analysis for academic researchers</em:description>
+    <em:creator>{{AuthorName}}</em:creator>
+    <em:type>2</em:type>
+    <em:bootstrap>true</em:bootstrap>
+    <em:targetApplication>
+      <Description>
+        <em:id>zotero@chnm.gmu.edu</em:id>
+        <em:minVersion>5.0</em:minVersion>
+        <em:maxVersion>7.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>"
+
+  # chrome.manifest
+  create_file "$PROJECT_NAME/chrome.manifest" "content {{ProjectName}} chrome/content/
+locale {{ProjectName}} en-US chrome/locale/en-US/
+skin {{ProjectName}} default chrome/skin/
+overlay chrome://zotero/content/zoteroPane.xul chrome://{{ProjectName}}/content/overlay.xul"
+
+  # bootstrap.js - Researcher edition
+  create_file "$PROJECT_NAME/bootstrap.js" "/**
+ * Bootstrap Entry Point - Researcher Edition
+ * Advanced features for academic research workflows
+ */
+
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
+
+function startup({ id, version, resourceURI, rootURI = resourceURI.spec }, reason) {
+  Cu.import('resource://gre/modules/Services.jsm');
+  Services.scriptloader.loadSubScript(rootURI + 'chrome/content/main.js');
+  Services.scriptloader.loadSubScript(rootURI + 'chrome/content/analysis.js');
+
+  if (typeof Zotero === 'undefined') {
+    Zotero = {};
+  }
+
+  Zotero.{{ProjectName}} = {
+    version: version,
+    rootURI: rootURI,
+    initialized: false,
+
+    init: async function() {
+      await Zotero.uiReadyPromise;
+      this.registerMenus();
+      this.initialized = true;
+      console.log('{{ProjectName}} Researcher v' + version + ' initialized');
+    },
+
+    registerMenus: function() {
+      // Register menus and keyboard shortcuts
+    },
+
+    shutdown: function() {
+      this.initialized = false;
+    }
+  };
+
+  Zotero.{{ProjectName}}.init();
+}
+
+function shutdown({ id, version, resourceURI, rootURI = resourceURI.spec }, reason) {
+  if (typeof Zotero !== 'undefined' && Zotero.{{ProjectName}}) {
+    Zotero.{{ProjectName}}.shutdown();
+  }
+}
+
+function install(data, reason) {}
+function uninstall(data, reason) {}"
+
+  # chrome/content/main.js - Core researcher features
+  create_file "$PROJECT_NAME/chrome/content/main.js" "/**
+ * Main Logic - Researcher Edition
+ * Core utilities for academic researchers
+ */
+
+(function() {
+  'use strict';
+
+  if (!Zotero.{{ProjectName}}) {
+    Zotero.{{ProjectName}} = {};
+  }
+
+  Zotero.{{ProjectName}}.Core = {
+    // Validate metadata completeness
+    validateMetadata: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length === 0) {
+        alert('Please select items to validate');
+        return;
+      }
+
+      const issues = [];
+      items.forEach(item => {
+        const title = item.getField('title');
+        const missing = [];
+        if (!item.getField('date')) missing.push('date');
+        if (!item.getField('DOI') && !item.getField('ISBN')) missing.push('DOI/ISBN');
+        if (item.getCreators().length === 0) missing.push('authors');
+        if (missing.length > 0) {
+          issues.push(title.substring(0, 40) + '... - missing: ' + missing.join(', '));
+        }
+      });
+
+      if (issues.length === 0) {
+        alert('All ' + items.length + ' items have complete metadata!');
+      } else {
+        alert('Issues found:\\n\\n' + issues.join('\\n'));
+      }
+    },
+
+    // Find potential duplicates
+    findDuplicates: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length < 2) {
+        alert('Select at least 2 items to check for duplicates');
+        return;
+      }
+
+      const titles = {};
+      const duplicates = [];
+
+      items.forEach(item => {
+        const title = item.getField('title').toLowerCase().trim();
+        const normalized = title.replace(/[^a-z0-9]/g, '');
+        if (titles[normalized]) {
+          duplicates.push(item.getField('title'));
+        } else {
+          titles[normalized] = true;
+        }
+      });
+
+      if (duplicates.length === 0) {
+        alert('No duplicates found among ' + items.length + ' items');
+      } else {
+        alert('Potential duplicates:\\n\\n' + duplicates.join('\\n'));
+      }
+    },
+
+    // Export as JSON-LD (schema.org compatible)
+    exportJsonLd: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length === 0) {
+        alert('Please select items to export');
+        return;
+      }
+
+      const jsonld = items.map(item => ({
+        '@context': 'https://schema.org',
+        '@type': 'ScholarlyArticle',
+        'name': item.getField('title'),
+        'datePublished': item.getField('date'),
+        'author': item.getCreators().map(c => ({
+          '@type': 'Person',
+          'familyName': c.lastName,
+          'givenName': c.firstName
+        })),
+        'identifier': item.getField('DOI') ? {
+          '@type': 'PropertyValue',
+          'propertyID': 'DOI',
+          'value': item.getField('DOI')
+        } : undefined
+      }));
+
+      this.copyToClipboard(JSON.stringify(jsonld, null, 2));
+      alert('JSON-LD exported to clipboard (' + items.length + ' items)');
+    },
+
+    copyToClipboard: function(text) {
+      const clipboard = Cc['@mozilla.org/widget/clipboard;1'].getService(Ci.nsIClipboard);
+      const transferable = Cc['@mozilla.org/widget/transferable;1'].createInstance(Ci.nsITransferable);
+      const str = Cc['@mozilla.org/supports-string;1'].createInstance(Ci.nsISupportsString);
+      str.data = text;
+      transferable.addDataFlavor('text/unicode');
+      transferable.setTransferData('text/unicode', str, text.length * 2);
+      clipboard.setData(transferable, null, Ci.nsIClipboard.kGlobalClipboard);
+    }
+  };
+})();"
+
+  # chrome/content/analysis.js - Statistical analysis features
+  create_file "$PROJECT_NAME/chrome/content/analysis.js" "/**
+ * Analysis Module - Researcher Edition
+ * Statistical and citation analysis features
+ */
+
+(function() {
+  'use strict';
+
+  if (!Zotero.{{ProjectName}}) {
+    Zotero.{{ProjectName}} = {};
+  }
+
+  Zotero.{{ProjectName}}.Analysis = {
+    // Generate library statistics
+    libraryStats: function() {
+      const items = ZoteroPane.getSelectedItems();
+      const collection = items.length > 0 ? items : Zotero.Items.getAll(Zotero.Libraries.userLibraryID);
+
+      const stats = {
+        total: collection.length,
+        byType: {},
+        byYear: {},
+        withDOI: 0,
+        withAbstract: 0
+      };
+
+      collection.forEach(item => {
+        if (item.isRegularItem()) {
+          // By type
+          const type = item.itemType;
+          stats.byType[type] = (stats.byType[type] || 0) + 1;
+
+          // By year
+          const year = item.getField('date').substring(0, 4);
+          if (year) {
+            stats.byYear[year] = (stats.byYear[year] || 0) + 1;
+          }
+
+          // Metadata completeness
+          if (item.getField('DOI')) stats.withDOI++;
+          if (item.getField('abstractNote')) stats.withAbstract++;
+        }
+      });
+
+      let report = '=== Library Statistics ===\\n\\n';
+      report += 'Total items: ' + stats.total + '\\n';
+      report += 'With DOI: ' + stats.withDOI + ' (' + Math.round(stats.withDOI/stats.total*100) + '%)\\n';
+      report += 'With abstract: ' + stats.withAbstract + ' (' + Math.round(stats.withAbstract/stats.total*100) + '%)\\n\\n';
+
+      report += '--- By Type ---\\n';
+      Object.entries(stats.byType).sort((a,b) => b[1]-a[1]).forEach(([type, count]) => {
+        report += type + ': ' + count + '\\n';
+      });
+
+      report += '\\n--- By Year (top 10) ---\\n';
+      Object.entries(stats.byYear).sort((a,b) => b[0]-a[0]).slice(0, 10).forEach(([year, count]) => {
+        report += year + ': ' + count + '\\n';
+      });
+
+      alert(report);
+    },
+
+    // Find items missing abstracts
+    findMissingAbstracts: function() {
+      const items = ZoteroPane.getSelectedItems();
+      if (items.length === 0) {
+        alert('Please select items to check');
+        return;
+      }
+
+      const missing = items.filter(item => !item.getField('abstractNote'));
+      if (missing.length === 0) {
+        alert('All selected items have abstracts!');
+      } else {
+        alert(missing.length + ' of ' + items.length + ' items are missing abstracts');
+      }
+    }
+  };
+})();"
+
+  # chrome/content/overlay.xul - Researcher menus
+  create_file "$PROJECT_NAME/chrome/content/overlay.xul" "<?xml version=\"1.0\"?>
+<overlay id=\"{{ProjectName}}-overlay\"
+         xmlns=\"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul\">
+  <script src=\"chrome://{{ProjectName}}/content/main.js\"/>
+  <script src=\"chrome://{{ProjectName}}/content/analysis.js\"/>
+  <menupopup id=\"zotero-itemmenu\">
+    <menu id=\"{{ProjectName}}-menu\" label=\"{{ProjectName}}\">
+      <menupopup>
+        <menuitem id=\"{{ProjectName}}-validate\"
+                  label=\"Validate Metadata\"
+                  oncommand=\"Zotero.{{ProjectName}}.Core.validateMetadata();\"/>
+        <menuitem id=\"{{ProjectName}}-duplicates\"
+                  label=\"Find Duplicates\"
+                  oncommand=\"Zotero.{{ProjectName}}.Core.findDuplicates();\"/>
+        <menuseparator/>
+        <menuitem id=\"{{ProjectName}}-stats\"
+                  label=\"Library Statistics\"
+                  oncommand=\"Zotero.{{ProjectName}}.Analysis.libraryStats();\"/>
+        <menuitem id=\"{{ProjectName}}-abstracts\"
+                  label=\"Find Missing Abstracts\"
+                  oncommand=\"Zotero.{{ProjectName}}.Analysis.findMissingAbstracts();\"/>
+        <menuseparator/>
+        <menuitem id=\"{{ProjectName}}-jsonld\"
+                  label=\"Export as JSON-LD\"
+                  oncommand=\"Zotero.{{ProjectName}}.Core.exportJsonLd();\"/>
+      </menupopup>
+    </menu>
+  </menupopup>
+</overlay>"
+
+  # package.json
+  create_file "$PROJECT_NAME/package.json" "{
+  \"name\": \"{{ProjectName}}\",
+  \"version\": \"{{version}}\",
+  \"description\": \"Advanced citation analysis plugin for academic researchers\",
+  \"author\": \"{{AuthorName}}\",
+  \"license\": \"MIT\",
+  \"scripts\": {
+    \"build\": \"tsc\",
+    \"watch\": \"tsc --watch\",
+    \"package\": \"zip -r {{ProjectName}}.xpi . -x 'node_modules/*' -x 'src/*' -x '*.ts' -x 'data/*'\",
+    \"test\": \"echo 'No tests configured'\"
+  },
+  \"devDependencies\": {
+    \"typescript\": \"^5.0.0\"
+  }
+}"
+
+  # .gitignore
+  create_file "$PROJECT_NAME/.gitignore" "node_modules/
+dist/
+*.xpi
+.DS_Store
+*.log
+data/"
+
+  success "Researcher template created"
 }
 
 # Parse command line arguments
