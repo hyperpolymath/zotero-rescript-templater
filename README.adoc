@@ -577,7 +577,7 @@ zotero-rescript-templater/
 ├── info.rkt                            # Racket package info
 ├── CITATION.cff                        # Academic citation
 ├── .zenodo.json                        # Zenodo metadata
-├── LICENSE.txt                         # AGPL-3.0-only
+├── LICENSE.txt                         # PMPL-1.0-only
 └── CLAUDE.md                           # AI assistance context
 ----
 
@@ -809,20 +809,20 @@ See link:SECURITY.md[SECURITY.md] for:
 
 == License
 
-This project is licensed under the *GNU Affero General Public License v3.0* (AGPL-3.0-only).
+This project is licensed under the *Palimpsest-MPL License v3.0* (PMPL-1.0-only).
 
 See link:LICENSE.txt[LICENSE.txt] for the full license text.
 
 === Key License Terms
 
 * *Network use triggers disclosure:* If you run this as a network service, you must provide source code to users
-* *Modifications must be shared:* Changes must be released under AGPL-3.0
+* *Modifications must be shared:* Changes must be released under PMPL-1.0
 * *Strong copyleft:* Derivatives must use compatible licenses
 * *Patent grant:* Contributors grant patent license
 
 === Generated Code License
 
-Templates generate code under the license you specify in scaffolding. The scaffolder itself is AGPL-3.0, but generated projects can use any license.
+Templates generate code under the license you specify in scaffolding. The scaffolder itself is PMPL-1.0, but generated projects can use any license.
 
 == Citation
 
@@ -877,4 +877,4 @@ See link:ROADMAP.md[ROADMAP.md] for planned features and future directions.
 
 *Made with ❤️ by the Zotero ReScript Templater community*
 
-*License:* AGPL-3.0-only | *Documentation:* AsciiDoc | *Compliance:* RSR Platinum
+*License:* PMPL-1.0-only | *Documentation:* AsciiDoc | *Compliance:* RSR Platinum
