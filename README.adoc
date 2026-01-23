@@ -297,7 +297,7 @@ Options:
 practitioner-plugin/
 ├── bootstrap.js          # Plugin lifecycle
 ├── chrome.manifest       # Chrome registration
-├── install.rdf           # Plugin metadata
+├── manifest.json           # Plugin metadata
 ├── src/
 │   ├── plugin.re         # ReScript source
 │   └── types.re          # Type definitions
@@ -337,7 +337,7 @@ npm test                  # Run tests
 researcher-plugin/
 ├── bootstrap.js          # Plugin lifecycle
 ├── chrome.manifest       # Chrome registration
-├── install.rdf           # Plugin metadata
+├── manifest.json           # Plugin metadata
 ├── src/
 │   ├── database.js       # SQLite interface
 │   ├── citations.js      # Citation analysis
@@ -384,7 +384,7 @@ const results = queryDatabase('SELECT * FROM citations');
 student-plugin/
 ├── bootstrap.js          # Plugin lifecycle
 ├── chrome.manifest       # Chrome registration
-├── install.rdf           # Plugin metadata
+├── manifest.json           # Plugin metadata
 ├── src/
 │   ├── plugin.ts         # TypeScript source
 │   ├── types.ts          # Type definitions

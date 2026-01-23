@@ -319,7 +319,7 @@ Zotero plugins extend the functionality of Zotero...
 │   ├── content/     # JavaScript logic
 │   ├── locale/      # Localization
 │   └── skin/        # CSS styles
-├── install.rdf      # Plugin manifest
+├── manifest.json    # Plugin manifest (Zotero 7-8)
 └── src/            # TypeScript sources
 \`\`\`
 
@@ -329,27 +329,28 @@ Let's add a simple menu item...
 
 Happy coding! 🎓"
 
-  # install.rdf
-  create_file "$PROJECT_NAME/install.rdf" "<?xml version=\"1.0\"?>
-<RDF xmlns=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
-     xmlns:em=\"http://www.mozilla.org/2004/em-rdf#\">
-  <Description about=\"urn:mozilla:install-manifest\">
-    <em:id>{{ProjectName}}@student.zotero.org</em:id>
-    <em:name>{{ProjectName}} Student Edition</em:name>
-    <em:version>{{version}}</em:version>
-    <em:description>Learning-focused Zotero plugin</em:description>
-    <em:creator>{{AuthorName}}</em:creator>
-    <em:type>2</em:type>
-    <em:bootstrap>true</em:bootstrap>
-    <em:targetApplication>
-      <Description>
-        <em:id>zotero@chnm.gmu.edu</em:id>
-        <em:minVersion>5.0</em:minVersion>
-        <em:maxVersion>6.*</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-  </Description>
-</RDF>"
+  # manifest.json
+  create_file "$PROJECT_NAME/manifest.json" "{
+  \"manifest_version\": 2,
+  \"name\": \"{{ProjectName}} Student Edition\",
+  \"version\": \"{{version}}\",
+  \"description\": \"Learning-focused Zotero plugin\",
+  \"author\": \"{{AuthorName}}\",
+  \"homepage_url\": \"https://github.com/{{AuthorName}}/{{ProjectName}}\",
+  \"applications\": {
+    \"gecko\": {
+      \"id\": \"{{ProjectName}}@student.zotero.org\",
+      \"strict_min_version\": \"115.0\",
+      \"strict_max_version\": \"8.0.*\"
+    }
+  },
+  \"icons\": {
+    \"48\": \"chrome/skin/icon.png\"
+  },
+  \"background\": {
+    \"scripts\": [\"bootstrap.js\"]
+  }
+}"
 
   # chrome.manifest
   create_file "$PROJECT_NAME/chrome.manifest" "content {{ProjectName}} chrome/content/
@@ -489,27 +490,28 @@ A workflow-focused Zotero plugin for professional practitioners.
 
 Access plugin features via Tools → {{ProjectName}} menu."
 
-  # install.rdf - Practitioner edition
-  create_file "$PROJECT_NAME/install.rdf" "<?xml version=\"1.0\"?>
-<RDF xmlns=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
-     xmlns:em=\"http://www.mozilla.org/2004/em-rdf#\">
-  <Description about=\"urn:mozilla:install-manifest\">
-    <em:id>{{ProjectName}}@practitioner.zotero.org</em:id>
-    <em:name>{{ProjectName}} Practitioner Edition</em:name>
-    <em:version>{{version}}</em:version>
-    <em:description>Workflow-focused Zotero plugin for practitioners</em:description>
-    <em:creator>{{AuthorName}}</em:creator>
-    <em:type>2</em:type>
-    <em:bootstrap>true</em:bootstrap>
-    <em:targetApplication>
-      <Description>
-        <em:id>zotero@chnm.gmu.edu</em:id>
-        <em:minVersion>5.0</em:minVersion>
-        <em:maxVersion>7.*</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-  </Description>
-</RDF>"
+  # manifest.json - Practitioner edition
+  create_file "$PROJECT_NAME/manifest.json" "{
+  \"manifest_version\": 2,
+  \"name\": \"{{ProjectName}} Practitioner Edition\",
+  \"version\": \"{{version}}\",
+  \"description\": \"Workflow-focused Zotero plugin for practitioners\",
+  \"author\": \"{{AuthorName}}\",
+  \"homepage_url\": \"https://github.com/{{AuthorName}}/{{ProjectName}}\",
+  \"applications\": {
+    \"gecko\": {
+      \"id\": \"{{ProjectName}}@practitioner.zotero.org\",
+      \"strict_min_version\": \"115.0\",
+      \"strict_max_version\": \"8.0.*\"
+    }
+  },
+  \"icons\": {
+    \"48\": \"chrome/skin/icon.png\"
+  },
+  \"background\": {
+    \"scripts\": [\"bootstrap.js\"]
+  }
+}"
 
   # chrome.manifest
   create_file "$PROJECT_NAME/chrome.manifest" "content {{ProjectName}} chrome/content/
@@ -723,27 +725,28 @@ Access features via:
 - Tools → {{ProjectName}} menu
 - Right-click context menu on selected items"
 
-  # install.rdf - Researcher edition
-  create_file "$PROJECT_NAME/install.rdf" "<?xml version=\"1.0\"?>
-<RDF xmlns=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
-     xmlns:em=\"http://www.mozilla.org/2004/em-rdf#\">
-  <Description about=\"urn:mozilla:install-manifest\">
-    <em:id>{{ProjectName}}@researcher.zotero.org</em:id>
-    <em:name>{{ProjectName}} Researcher Edition</em:name>
-    <em:version>{{version}}</em:version>
-    <em:description>Advanced citation analysis for academic researchers</em:description>
-    <em:creator>{{AuthorName}}</em:creator>
-    <em:type>2</em:type>
-    <em:bootstrap>true</em:bootstrap>
-    <em:targetApplication>
-      <Description>
-        <em:id>zotero@chnm.gmu.edu</em:id>
-        <em:minVersion>5.0</em:minVersion>
-        <em:maxVersion>7.*</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-  </Description>
-</RDF>"
+  # manifest.json - Researcher edition
+  create_file "$PROJECT_NAME/manifest.json" "{
+  \"manifest_version\": 2,
+  \"name\": \"{{ProjectName}} Researcher Edition\",
+  \"version\": \"{{version}}\",
+  \"description\": \"Advanced citation analysis for academic researchers\",
+  \"author\": \"{{AuthorName}}\",
+  \"homepage_url\": \"https://github.com/{{AuthorName}}/{{ProjectName}}\",
+  \"applications\": {
+    \"gecko\": {
+      \"id\": \"{{ProjectName}}@researcher.zotero.org\",
+      \"strict_min_version\": \"115.0\",
+      \"strict_max_version\": \"8.0.*\"
+    }
+  },
+  \"icons\": {
+    \"48\": \"chrome/skin/icon.png\"
+  },
+  \"background\": {
+    \"scripts\": [\"bootstrap.js\"]
+  }
+}"
 
   # chrome.manifest
   create_file "$PROJECT_NAME/chrome.manifest" "content {{ProjectName}} chrome/content/
